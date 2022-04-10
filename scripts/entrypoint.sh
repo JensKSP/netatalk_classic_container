@@ -48,13 +48,13 @@ then
     fi
     if [ "$ACCOUNT_GID" -gt 0 ] 2>/dev/null
     then
-      ACCOUNT_GID_PARAM="-g $ACCOUNT_GID"
+      ACCOUNT_GID_PARAM="-G $ACCOUNT_GID"
     fi
     eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/false "$ACCOUNT_NAME"
 	
 	echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | passwd "$ACCOUNT_NAME"
 	#echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | afppasswd -a "$ACCOUNT_NAME"
-	echo -e "$ACCOUNT_AFPPASSWORD" >> "${CONFDIR}/afppasswd"
+	echo "$ACCOUNT_AFPPASSWORD" >> "${CONFDIR}/afppasswd"
 
     # add user to groups...
     ACCOUNT_GROUPS=$(env | grep '^GROUPS_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
