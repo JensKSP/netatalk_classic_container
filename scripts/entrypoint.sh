@@ -50,7 +50,7 @@ then
     then
       ACCOUNT_GID_PARAM="-G $ACCOUNT_PRIMARY_GROUP"
     fi
-    eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/false "$ACCOUNT_NAME"
+    eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/sh "$ACCOUNT_NAME"
 	
 	echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | passwd "$ACCOUNT_NAME"
 	#echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | afppasswd -a "$ACCOUNT_NAME"
@@ -91,7 +91,7 @@ then
   # Shares default config (Volumes)
   ##
   echo "Setting volume default options $VOLUME_DEFAULT_OPTIONS"
-  sed set sed -i "s|:DEFAULT: options:upriv,usedots|$VOLUME_DEFAULT_OPTIONS|g" "$CONFDIR/AppleVolumes.default"
+  sed sed -i "s|:DEFAULT: options:upriv,usedots|$VOLUME_DEFAULT_OPTIONS|g" "$CONFDIR/AppleVolumes.default"
 
   ##
   # Shares (Volumes)

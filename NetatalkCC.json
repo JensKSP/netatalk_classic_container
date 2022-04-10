@@ -46,11 +46,11 @@
       },
 	  {
          "key" : "VOLUME_DEFAULT_OPTIONS",
-         "value" : ":DEFAULT: options:upriv,usedots"
+         "value" : ":DEFAULT: options:upriv,usedots dperm:0775 fperm:0664 umask:003"
       },
 	  {
          "key" : "SHARE_cc",
-         "value" : "/shares/cc \"cc\" allow:bridge rwlist:bridge perm:0777 dperm:0777 fperm:0666 umask:0000"
+         "value" : "/shares/cc \"cc\" allow:bridge rwlist:bridge"
       }
    ],
    "exporting" : false,

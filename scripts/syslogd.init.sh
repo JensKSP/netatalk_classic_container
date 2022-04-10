@@ -10,9 +10,9 @@ SUSE=0
 #
 killproc() {
 	echo "Killing $1..."
-	pid=`/usr/bin/ps -e |
-	     /usr/bin/grep $1 |
-	     /usr/bin/sed -e 's/^  *//' -e 's/ .*//'`
+	pid=`/bin/ps -e |
+	     /bin/grep $1 |
+	     /bin/sed -e 's/^  *//' -e 's/ .*//'`
 	[ "$pid" != "" ] && kill $pid
 }
 
@@ -20,9 +20,9 @@ killproc() {
 # status of the named process(es)
 #
 status() {
-	pid=`/usr/bin/ps -e |
-	     /usr/bin/grep $1 |
-	     /usr/bin/sed -e 's/^  *//' -e 's/ .*//'`
+	pid=`/bin/ps -e |
+	     /bin/grep $1 |
+	     /bin/sed -e 's/^  *//' -e 's/ .*//'`
 	if [ "$pid" != "" ];
 	then
 		echo "$1 running with pid(s) $pid"

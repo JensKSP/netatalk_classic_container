@@ -11,9 +11,9 @@
 # kill the named process(es)
 #
 killproc() {
-	pid=`/usr/bin/ps -e |
-	     /usr/bin/grep $1 |
-	     /usr/bin/sed -e 's/^  *//' -e 's/ .*//'`
+	pid=`/bin/ps -e |
+	     /bin/grep $1 |
+	     /bin/sed -e 's/^  *//' -e 's/ .*//'`
 	[ "$pid" != "" ] && kill $pid
 }
 
