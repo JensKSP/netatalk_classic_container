@@ -1,0 +1,58 @@
+{
+   "CapAdd" : [ "NET_ADMIN", "NET_BROADCAST" ],
+   "CapDrop" : [],
+   "cmd" : "/container/scripts/netatalk.sh",
+   "cpu_priority" : 50,
+   "enable_publish_all_ports" : false,
+   "enable_restart_policy" : true,
+   "enabled" : true,
+   "entrypoint_default" : "/container/scripts/entrypoint.sh",
+   "env_variables" : [
+      {
+         "key" : "PATH",
+         "value" : "/container/scripts:/opt/netatalk/sbin:/opt/netatalk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      }
+   ],
+   "exporting" : false,
+   "id" : "e38cfbe0434ff5c4fd2719e9264942ed9613a619c34a5772d650436f45b291af",
+   "image" : "netatalk_classic:latest",
+   "is_ddsm" : false,
+   "is_package" : false,
+   "links" : [],
+   "memory_limit" : 2147483648,
+   "memory_limit_slider" : 2048,
+   "name" : "NetatalkCC",
+   "network" : [
+      {
+         "driver" : "host",
+         "name" : "host"
+      }
+   ],
+   "network_mode" : "host",
+   "port_bindings" : [],
+   "privileged" : false,
+   "shortcut" : {
+      "enable_shortcut" : false,
+      "enable_status_page" : false,
+      "enable_web_page" : false,
+      "web_page_url" : ""
+   },
+   "use_host_network" : true,
+   "volume_bindings" : [
+      {
+         "host_volume_file" : "/docker/run/avahi-daemon/socket",
+         "mount_point" : "/var/run/avahi-daemon/socket",
+         "type" : "rw"
+      },
+      {
+         "host_volume_file" : "/docker/run/dbus",
+         "mount_point" : "/var/run/dbus",
+         "type" : "rw"
+      },
+      {
+         "host_volume_file" : "/CC",
+         "mount_point" : "/shares/cc",
+         "type" : "rw"
+      }
+   ]
+}

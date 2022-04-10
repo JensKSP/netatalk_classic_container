@@ -1,0 +1,135 @@
+diff --git a/contrib/a2boot/a2boot.c b/contrib/a2boot/a2boot.c
+index deb63045..2502bd0b 100644
+--- a/contrib/a2boot/a2boot.c
++++ b/contrib/a2boot/a2boot.c
+@@ -27,6 +27,7 @@
+ #include <sys/types.h>
+ #include <sys/file.h>
+ #include <sys/uio.h>
++#include <sys/ioctl.h>
+ 
+ #include <stdlib.h>
+ #include <unistd.h>
+diff --git a/distrib/initscripts/Makefile.am b/distrib/initscripts/Makefile.am
+index a54ab0fe..1333a7b3 100644
+--- a/distrib/initscripts/Makefile.am
++++ b/distrib/initscripts/Makefile.am
+@@ -97,7 +97,8 @@ endif
+ 
+ if USE_SYSTEMD
+ 
+-servicedir	= /lib/systemd/system
++#servicedir	= /lib/systemd/system
++servicedir	= /opt/netatalk/lib/systemd/system
+ service_DATA	= a2boot.service afpd.service atalkd.service cnid.service papd.service timelord.service
+ 
+ install-data-hook:
+diff --git a/etc/afpd/afs.c b/etc/afpd/afs.c
+index 9d6835f4..88bdbc7b 100644
+--- a/etc/afpd/afs.c
++++ b/etc/afpd/afs.c
+@@ -23,7 +23,7 @@
+ #endif /* HAVE_UNISTD_H */
+ #include <sys/stat.h>
+ 
+-#include "globals.h"
++#include <atalk/globals.h>
+ #include "directory.h"
+ #include "volume.h"
+ #include "misc.h"
+diff --git a/etc/afpd/file.c b/etc/afpd/file.c
+index 88d2b999..e1c2db59 100644
+--- a/etc/afpd/file.c
++++ b/etc/afpd/file.c
+@@ -1381,8 +1381,8 @@ int afp_copyfile(AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf _U_, si
+     curdir->d_offcnt++;
+ 
+ #ifdef DROPKLUDGE
+-    if (vol->v_flags & AFPVOL_DROPBOX) {
+-        retvalue=matchfile2dirperms(upath, vol, ddid); /* FIXME sdir or ddid */
++    if (d_vol->v_flags & AFPVOL_DROPBOX) {
++        retvalue=matchfile2dirperms(upath, d_vol, ddid); /* FIXME sdir or ddid */
+     }
+ #endif /* DROPKLUDGE */
+ 
+diff --git a/etc/afpd/filedir.c b/etc/afpd/filedir.c
+index 83ee7136..f49b774f 100644
+--- a/etc/afpd/filedir.c
++++ b/etc/afpd/filedir.c
+@@ -77,7 +77,7 @@ int matchfile2dirperms(
+         return AFPERR_NOOBJ ;
+     }
+ 
+-    adpath = vol->vfs->ad_path( upath, ADFLAGS_HF );
++    adpath = vol->ad_path( upath, ADFLAGS_HF );
+     /* FIXME dirsearch doesn't move cwd to did ! */
+     if (( dir = dirlookup( vol, did )) == NULL ) {
+         LOG(log_error, logtype_afpd, "matchfile2dirperms: Unable to get directory info.");
+diff --git a/etc/afpd/volume.c b/etc/afpd/volume.c
+index e1baca39..0972783f 100644
+--- a/etc/afpd/volume.c
++++ b/etc/afpd/volume.c
+@@ -2033,7 +2033,7 @@ int afp_getsrvrparms(AFPObj *obj, char *ibuf _U_, size_t ibuflen _U_, char *rbuf
+     data = rbuf + 5;
+     for ( vcnt = 0, volume = Volumes; volume && vcnt < 255; volume = volume->v_next ) {
+         if (!(volume->v_flags & AFPVOL_NOSTAT)) {
+-            struct maccess ma;
++            // struct maccess ma;
+ 
+             if ( stat( volume->v_path, &st ) < 0 ) {
+                 LOG(log_info, logtype_afpd, "afp_getsrvrparms(%s): stat: %s",
+@@ -2043,10 +2043,10 @@ int afp_getsrvrparms(AFPObj *obj, char *ibuf _U_, size_t ibuflen _U_, char *rbuf
+             if (!S_ISDIR(st.st_mode)) {
+                 continue;       /* not a dir */
+             }
+-            accessmode(volume, volume->v_path, &ma, NULL, &st);
+-            if ((ma.ma_user & (AR_UREAD | AR_USEARCH)) != (AR_UREAD | AR_USEARCH)) {
+-                continue;   /* no r-x access */
+-            }
++            // accessmode(volume, volume->v_path, &ma, NULL, &st);
++            // if ((ma.ma_user & (AR_UREAD | AR_USEARCH)) != (AR_UREAD | AR_USEARCH)) {
++            //     continue;   /* no r-x access */
++            // }
+         }
+         if (volume->v_hide) {
+             continue;       /* config file changed but the volume was mounted */
+diff --git a/etc/uams/uams_guest.c b/etc/uams/uams_guest.c
+index 0b5019e0..3a779ee6 100644
+--- a/etc/uams/uams_guest.c
++++ b/etc/uams/uams_guest.c
+@@ -69,9 +69,10 @@ static int noauth_login(void *obj, struct passwd **uam_pwd,
+     }
+ 
+ #ifdef AFS
++	// TODO: setpag() doesn't seem to be implemented on medern Linux systems, can we ignore this???
+     if ( setpag() < 0 ) {
+ 	LOG(log_error, logtype_uams, "noauth_login: setpag: %s", strerror(errno) );
+-	return( AFPERR_BADUAM );
++	// return( AFPERR_BADUAM );
+     }
+ #endif /* AFS */
+ 
+diff --git a/etc/uams/uams_krb4/uams_krb4.c b/etc/uams/uams_krb4/uams_krb4.c
+index ff7c2c0a..6773ac5d 100644
+--- a/etc/uams/uams_krb4/uams_krb4.c
++++ b/etc/uams/uams_krb4/uams_krb4.c
+@@ -235,7 +235,8 @@ static int krb4_login(void *obj, struct passwd **uam_pwd,
+     if ( setpag() < 0 ) {
+ 	*rbuflen = 0;
+ 	LOG(log_error, logtype_default, "krb_login: setpag: %s", strerror(errno) );
+-	return( AFPERR_BADUAM );
++	// TODO: setpag() doesn't seem to be implemented on medern Linux systems, can we ignore this???
++	// return( AFPERR_BADUAM );
+     }
+ #endif /*AFS*/
+ 
+@@ -611,7 +612,8 @@ static int afskrb_login(void *obj, struct passwd *uam_pwd,
+     if ( validseskey == 0 ) {
+ 	if ( setpag() < 0 ) {
+ 	    LOG(log_error, logtype_default, "krb_login: setpag: %s", strerror(errno) );
+-	    return AFPERR_BADUAM;
++		// TODO: setpag() doesn't seem to be implemented on medern Linux systems, can we ignore this???
++	    // return AFPERR_BADUAM;
+ 	}
+ 	krb_set_tkt_string(( tktfile = mktemp( _PATH_AFPTKT )));
+ 	if (( rc =  krb_get_svc_in_tkt( "afpserver", servername, realm,
