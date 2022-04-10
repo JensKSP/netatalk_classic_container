@@ -40,7 +40,7 @@ then
 	ACCOUNT_AFPPASSWORD=$(env | grep '^AFPPASSWD_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
 
     ACCOUNT_UID=$(env | grep '^UID_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
-    ACCOUNT_GID=$(env | grep '^GID_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
+    ACCOUNT_PRIMARY_GROUP=$(env | grep '^PRIMARY_GROUP_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
 	
     if [ "$ACCOUNT_UID" -gt 0 ] 2>/dev/null
     then
@@ -48,7 +48,7 @@ then
     fi
     if [ "$ACCOUNT_GID" -gt 0 ] 2>/dev/null
     then
-      ACCOUNT_GID_PARAM="-G $ACCOUNT_GID"
+      ACCOUNT_GID_PARAM="-G $ACCOUNT_PRIMARY_GROUP"
     fi
     eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/false "$ACCOUNT_NAME"
 	

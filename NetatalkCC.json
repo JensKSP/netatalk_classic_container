@@ -29,8 +29,8 @@
          "value" : "1027"
       },
 	  {
-         "key" : "GID_bridge",
-         "value" : "100"
+         "key" : "PRIMARY_GROUP_bridge",
+         "value" : "users"
       },
 	  {
          "key" : "GROUPS_bridge",
