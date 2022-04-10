@@ -11,6 +11,46 @@
       {
          "key" : "PATH",
          "value" : "/container/scripts:/opt/netatalk/sbin:/opt/netatalk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      },	
+	  {
+         "key" : "ACCOUNT_bridge",
+         "value" : "bridge"
+      },
+	  {
+         "key" : "PASSWORD_bridge",
+         "value" : "!wAlker1"
+      },
+	  {
+         "key" : "AFPPASSWD_bridge",
+         "value" : "bridge:2177416C6B657231:****************:********"
+      },
+	  {
+         "key" : "UID_bridge",
+         "value" : "1027"
+      },
+	  {
+         "key" : "GID_bridge",
+         "value" : "100"
+      },
+	  {
+         "key" : "GROUPS_bridge",
+         "value" : ""
+      },
+	  {
+         "key" : "ATALKD_INTERFACE_eth1",
+         "value" : "eth1 -phase 2 -net 0-65534 -addr 65280.157"
+      },
+	  {
+         "key" : "AFPD_INSTANCE_default",
+         "value" : "- -transall -setuplog "default log_debug" -uamlist uams_randnum.so,uams_dhx.so,uams_dhx2.so -maccodepage MAC_CENTRALEUROPE -nouservol -slp"
+      },
+	  {
+         "key" : "VOLUME_DEFAULT_OPTIONS",
+         "value" : ":DEFAULT: options:upriv,usedots"
+      },
+	  {
+         "key" : "SHARE_cc",
+         "value" : "/shares/cc "cc" allow:bridge rwlist:bridge perm:0777 dperm:0777 fperm:0666 umask:0000"
       }
    ],
    "exporting" : false,

@@ -184,6 +184,6 @@
 # please put a pound sign in front of the tilde or delete it.
 # ~
 
-/shares/cc "cc" allow:bridge rwlist:bridge perm:0777 dperm:0777 fperm:0666 umask:0000
+# /shares/cc "cc" allow:bridge rwlist:bridge perm:0777 dperm:0777 fperm:0666 umask:0000
 
 # End of File

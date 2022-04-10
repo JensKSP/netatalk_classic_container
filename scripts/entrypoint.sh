@@ -6,44 +6,104 @@ Welcome to the NetatalkCC
 ################################################################################
 EOF
 
+export IFS=$'\n'
+
 INITALIZED="/.initialized"
 
-if [ ! -f "$INITALIZED" ]; then
-
-	# TODO: The whole configuration process of 
-	# appletalk interfaces, shares, users, signature, etc...
-
-	# TODO
-	NICS=
-	# TODO
-	SHARES=
-	# TODO
-	SIGNATURE=
-
-	# TODO 
-	USER=bridge
-	UID=1027
-	GID=100
-	PASSWD_LINE="bridge:2177416C6B657231:****************:********"
+if [ ! -f "$INITALIZED" ];
+then
+  echo ">> CONTAINER: initializing..."
+  
+  PREFIX=/opt/netatalk
+  ETCDIR=$PREFIX/etc
+  CONFDIR=$ETCDIR/netatalk
 	
-	##
-	# USER ACCOUNTS
-	##
-	for I_ACCOUNT in $(env | grep '^ACCOUNT_')
-	done
-	
+  ##
+  # GROUPS
+  ##
+  for I_CONF in $(env | grep '^GROUP_')
+  do
+    GROUP_NAME=$(echo "$I_CONF" | sed 's/^GROUP_//g' | sed 's/=.*//g')
+    GROUP_ID=$(echo "$I_CONF" | sed 's/^[^=]*=//g')
+    echo ">> GROUP: adding group $GROUP_NAME with GID: $GROUP_ID"
+    addgroup -g "$GROUP_ID" "$GROUP_NAME"
+  done
 
-	/bin/id $USER 2>/dev/null
-	if ! [ $? -eq 0 ];
-	then
-		echo "Creating user $USER..."
-		useradd -u $UID -g $GID $USER
-		# afppasswd -a $USER
-		echo $PASSWD_LINE \
-			>> /opt/netatalk/etc/netatalk/afppasswd
-	fi
+  ##
+  # USER ACCOUNTS
+  ##
+  for I_ACCOUNT in $(env | grep '^ACCOUNT_')
+  do
+	echo "Processing account $I_ACCOUNT"
+    ACCOUNT_NAME=$(echo $I_ACCOUNT | sed 's/^[^=]*=//g')
+    ACCOUNT_PASSWORD=$(env | grep '^PASSWORD_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
+	ACCOUNT_AFPPASSWORD=$(env | grep '^AFPPASSWD_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
+
+    ACCOUNT_UID=$(env | grep '^UID_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
+    ACCOUNT_GID=$(env | grep '^GID_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
 	
-	touch "$INITALIZED"
+    if [ "$ACCOUNT_UID" -gt 0 ] 2>/dev/null
+    then
+      ACCOUNT_UID_PARAM="-u $ACCOUNT_UID"
+    fi
+    if [ "$ACCOUNT_GID" -gt 0 ] 2>/dev/null
+    then
+      ACCOUNT_GID_PARAM="-g $ACCOUNT_GID"
+    fi
+    eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/false "$ACCOUNT_NAME"
+	
+	echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | passwd "$ACCOUNT_NAME"
+	#echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | afppasswd -a "$ACCOUNT_NAME"
+	echo -e "$ACCOUNT_AFPPASSWORD" >> "${CONFDIR}/afppasswd"
+
+    # add user to groups...
+    ACCOUNT_GROUPS=$(env | grep '^GROUPS_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')
+    for GRP in $(echo "$ACCOUNT_GROUPS" | tr ',' '\n' | grep .);
+	do
+      echo ">> ACCOUNT: adding account: $ACCOUNT_NAME to group: $GRP"
+      addgroup "$ACCOUNT_NAME" "$GRP"
+    done
+
+    unset $(echo "$I_ACCOUNT" | cut -d'=' -f1)
+  done
+
+  ##
+  # Appletalk interfaces, atalkd
+  ##
+  for I_INTERFACE in $(env | grep '^ATALKD_INTERFACE_')
+  do
+	echo "Processing Appletalk interface $I_INTERFACE"
+    INTERFACE_CONFIG=$(echo $I_INTERFACE | sed 's/^[^=]*=//g')
+    echo "$INTERFACE_CONFIG" >> "$CONFDIR/atalkd.conf"
+  done
+
+  ##
+  # AFP instances, afpd
+  ##
+  for I_INSTANCE in $(env | grep '^AFPD_INSTANCE_')
+  do
+	echo "Processing AFP instance $I_INSTANCE"
+    INSTANCE_CONFIG=$(echo $I_INSTANCE | sed 's/^[^=]*=//g')
+    echo "$INSTANCE_CONFIG" >> "$CONFDIR/afpd.conf"
+  done
+
+  ##
+  # Shares default config (Volumes)
+  ##
+  echo "Setting volume default options $VOLUME_DEFAULT_OPTIONS"
+  sed set sed -i "s|:DEFAULT: options:upriv,usedots|$VOLUME_DEFAULT_OPTIONS|g" "$CONFDIR/AppleVolumes.default"
+
+  ##
+  # Shares (Volumes)
+  ##
+  for I_SHARE in $(env | grep '^SHARE_')
+  do
+	echo "Processing share $I_SHARE"
+    SHARE_CONFIG=$(echo $I_SHARE | sed 's/^[^=]*=//g')
+    echo "$SHARE_CONFIG" >> "$CONFDIR/AppleVolumes.default"
+  done
+
+  touch "$INITALIZED"
 else
   echo ">> CONTAINER: already initialized - direct start of netatalk"
 fi
