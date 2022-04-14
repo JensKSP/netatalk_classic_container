@@ -49,8 +49,8 @@
          "value" : ":DEFAULT: options:upriv,usedots"
       },
 	  {
-         "key" : "SHARE_test",
-         "value" : "/test/bridge \"test\" allow:bridge rwlist:bridge adouble:v2 ea:auto options:usedots,limitsize volcharset:UTF8 volsizelimit:500"
+         "key" : "SHARE_CC",
+         "value" : "/share/CC \"CC\" allow:bridge rwlist:bridge adouble:v2 ea:auto options:usedots,limitsize volcharset:UTF8 volsizelimit:500"
       }
    ],
    "exporting" : false,
@@ -91,7 +91,7 @@
       },
       {
          "host_volume_file" : "/CC",
-         "mount_point" : "/shares/cc",
+         "mount_point" : "/shares/CC",
          "type" : "rw"
       }
    ]

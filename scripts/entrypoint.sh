@@ -64,11 +64,6 @@ then
       echo ">> ACCOUNT: adding account: $ACCOUNT_NAME to group: $GRP"
       addgroup "$ACCOUNT_NAME" "$GRP"
     done
-
-	mkdir -p "/test/$ACCOUNT_NAME"
-	chown -R $ACCOUNT_NAME:$ACCOUNT_PRIMARY_GROUP "/test/$ACCOUNT_NAME"
-	chmod 777 "/test/$ACCOUNT_NAME"
-
     unset $(echo "$I_ACCOUNT" | cut -d'=' -f1)
   done
 

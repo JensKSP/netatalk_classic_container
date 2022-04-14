@@ -3,10 +3,7 @@ FROM alpine AS netatalk_base
 RUN apk add --no-cache db db-utils libgcrypt openssl zlib \
 	avahi linux-pam gnu-libiconv libtirpc rpcsvc-proto \
 	libintl cups krb5-libs \
-	acl shadow bash perl tzdata libldap \
-	&& cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime \
-	&& echo "Europe/Brussels" >  /etc/timezone \
-	&& apk del tzdata 
+	acl shadow bash perl tzdata libldap
 
 FROM netatalk_base AS netatalk_build
 
@@ -19,13 +16,11 @@ RUN apk add --no-cache make gcc git flex bison \
 	cups-dev acl-dev krb5-dev openldap-dev
 
 RUN apk add --no-cache musl-dbg openssl-dbg
-	
-#	shadow-dev
 
 ENV PKG_CONFIG_PATH=/opt/netatalk/lib/pkgconfig
 ENV LDFLAGS="-L/opt/netatalk/lib -Wl,-rpath,/opt/netatalk/lib"
 ENV CPPFLAGS="-I/opt/netatalk/include -I/usr/include/tirpc"
-ENV CFLAGS="-g"
+# ENV CFLAGS="-g"
 
 RUN mkdir -p /usr/src/openslp \
 && cd /usr/src/openslp \
