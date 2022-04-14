@@ -50,7 +50,7 @@
       },
 	  {
          "key" : "SHARE_CC",
-         "value" : "/share/CC \"CC\" allow:bridge rwlist:bridge adouble:v2 ea:auto options:usedots,limitsize volcharset:UTF8 volsizelimit:500"
+         "value" : "/shares/CC \"CC\" allow:bridge rwlist:bridge adouble:v2 ea:auto options:usedots,limitsize volcharset:UTF8 volsizelimit:500"
       }
    ],
    "exporting" : false,
