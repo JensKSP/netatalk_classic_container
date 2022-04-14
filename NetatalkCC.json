@@ -42,15 +42,15 @@
       },
 	  {
          "key" : "AFPD_INSTANCE_default",
-         "value" : "- -transall -setuplog \"default log_debug\" -uamlist uams_randnum.so,uams_dhx.so,uams_dhx2.so -maccodepage MAC_CENTRALEUROPE -nouservol -slp"
+         "value" : "- -transall -setuplog \"default log_maxdebug\" -uamlist uams_randnum.so,uams_dhx.so,uams_dhx2.so -maccodepage MAC_CENTRALEUROPE -nouservol -slp"
       },
 	  {
          "key" : "VOLUME_DEFAULT_OPTIONS",
-         "value" : ":DEFAULT: options:upriv,usedots dperm:0775 fperm:0664 umask:003"
+         "value" : ":DEFAULT: options:upriv,usedots"
       },
 	  {
-         "key" : "SHARE_cc",
-         "value" : "/shares/cc \"cc\" allow:bridge rwlist:bridge"
+         "key" : "SHARE_test",
+         "value" : "/test/bridge \"test\" allow:bridge rwlist:bridge adouble:v2 ea:auto options:usedots,limitsize volcharset:UTF8 volsizelimit:500"
       }
    ],
    "exporting" : false,

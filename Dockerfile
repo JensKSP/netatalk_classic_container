@@ -2,8 +2,8 @@ FROM alpine AS netatalk_base
 
 RUN apk add --no-cache db db-utils libgcrypt openssl zlib \
 	avahi linux-pam gnu-libiconv libtirpc rpcsvc-proto \
-	libxslt libxml2 libintl cups krb5-libs \
-	acl shadow bash perl tzdata \
+	libintl cups krb5-libs \
+	acl shadow bash perl tzdata libldap \
 	&& cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime \
 	&& echo "Europe/Brussels" >  /etc/timezone \
 	&& apk del tzdata 
@@ -12,12 +12,11 @@ FROM netatalk_base AS netatalk_build
 
 RUN apk add --no-cache make gcc git flex bison \
 	autoconf automake libtool patch pkgconfig \
-	linux-headers gdb \
+	linux-headers gdb file \
 	libc-dev db-dev libgcrypt-dev openssl-dev \
 	zlib-dev avahi-dev linux-pam-dev \
 	gnu-libiconv-dev rpcsvc-proto-dev libtirpc-dev \
-	libxslt-dev libxml2-dev gettext-dev \
-	cups-dev acl-dev krb5-dev 
+	cups-dev acl-dev krb5-dev openldap-dev
 
 RUN apk add --no-cache musl-dbg openssl-dbg
 	
@@ -39,33 +38,6 @@ RUN cd /usr/src/openslp/openslp && ./autogen.sh \
 		--enable-slpv2-security --prefix=/opt/netatalk \
 	&& make -j$(nproc) && make install
 
-# RUN mkdir -p /usr/src/tcp-wrappers \
-# && cd /usr/src/tcp-wrappers \
-# && git clone --progress --depth 1 \
-#	https://github.com/pexip/os-tcp-wrappers.git .
-
-# RUN cd /usr/src/tcp-wrappers && make REAL_DAEMON_DIR=/usr/bin linux && false
-
-RUN mkdir -p /usr/src/musl-compat \
-&& cd /usr/src/musl-compat \
-&& git clone --progress --depth 1 \
-	https://github.com/somasis/musl-compat.git .
-
-RUN cd /usr/src/musl-compat \
-	&& make -j$(nproc) && make install
-
-COPY ./patches/openafs.patch /usr/src/patches/openafs.patch
-
-RUN mkdir -p /usr/src/openafs \
-&& cd /usr/src/openafs \
-&& git clone --progress --depth 1 \
-	git://git.openafs.org/openafs.git . \
-&& patch -Np1 < /usr/src/patches/openafs.patch
-
-RUN cd /usr/src/openafs && ./regen.sh \
-	&& ./configure --prefix=/opt/netatalk \
-	&& make -j$(nproc) && make install
-
 COPY ./patches/netatalk.patch /usr/src/patches/netatalk.patch
 
 RUN mkdir -p /usr/src/netatalk-code \
@@ -75,10 +47,10 @@ RUN mkdir -p /usr/src/netatalk-code \
 && patch -Np1 < /usr/src/patches/netatalk.patch
 
 RUN cd /usr/src/netatalk-code && ./bootstrap \
-	&& CPPFLAGS="$CPPFLAGS -DNEED_RQUOTA -Dafs_uint32=uint32_t -Dafs_int32=int32_t" \
-		LDFLAGS="$LDFLAGS -ltirpc -lrxkad -lrx -llwp -lopr -lafshcrypto -lrokenafs -lafsauthent" \
+	&& CPPFLAGS="$CPPFLAGS -DNEED_RQUOTA" \
+		LDFLAGS="$LDFLAGS -ltirpc" \
 	./configure --prefix=/opt/netatalk \
-		--enable-afs \
+		--disable-afs \
 		--enable-ddp \
 		--enable-srvloc \
 		--enable-a2boot \
@@ -88,8 +60,11 @@ RUN cd /usr/src/netatalk-code && ./bootstrap \
 		--with-shadow \
 		--enable-overwrite \
 		--enable-dropkludge \
-		--with-logfile \
+		--enable-logfile \
+		--enable-krb4-uam \
+		--enable-krbV-uam \
 		--with-acls \
+		--enable-force-uidgid \
 	&& make -j$(nproc) && make install
 
 FROM netatalk_base AS netatalk

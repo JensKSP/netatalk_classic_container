@@ -46,10 +46,11 @@ then
     then
       ACCOUNT_UID_PARAM="-u $ACCOUNT_UID"
     fi
-    if [ "$ACCOUNT_GID" -gt 0 ] 2>/dev/null
+    if [ -n "$ACCOUNT_PRIMARY_GROUP" ] 2>/dev/null
     then
       ACCOUNT_GID_PARAM="-G $ACCOUNT_PRIMARY_GROUP"
     fi
+    echo "eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/sh $ACCOUNT_NAME"
     eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/sh "$ACCOUNT_NAME"
 	
 	echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | passwd "$ACCOUNT_NAME"
@@ -63,6 +64,10 @@ then
       echo ">> ACCOUNT: adding account: $ACCOUNT_NAME to group: $GRP"
       addgroup "$ACCOUNT_NAME" "$GRP"
     done
+
+	mkdir -p "/test/$ACCOUNT_NAME"
+	chown -R $ACCOUNT_NAME:$ACCOUNT_PRIMARY_GROUP "/test/$ACCOUNT_NAME"
+	chmod 777 "/test/$ACCOUNT_NAME"
 
     unset $(echo "$I_ACCOUNT" | cut -d'=' -f1)
   done
@@ -91,7 +96,7 @@ then
   # Shares default config (Volumes)
   ##
   echo "Setting volume default options $VOLUME_DEFAULT_OPTIONS"
-  sed sed -i "s|:DEFAULT: options:upriv,usedots|$VOLUME_DEFAULT_OPTIONS|g" "$CONFDIR/AppleVolumes.default"
+  sed -i 's|:DEFAULT: options:upriv,usedots|'"$VOLUME_DEFAULT_OPTIONS"'|g' "$CONFDIR/AppleVolumes.default"
 
   ##
   # Shares (Volumes)
