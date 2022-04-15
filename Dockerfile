@@ -2,8 +2,7 @@ FROM alpine AS netatalk_base
 
 RUN apk add --no-cache db db-utils libgcrypt openssl zlib \
 	avahi linux-pam gnu-libiconv libtirpc rpcsvc-proto \
-	libintl cups krb5-libs \
-	acl shadow bash perl tzdata libldap
+	libintl cups krb5-libs acl shadow bash perl tzdata libldap
 
 FROM netatalk_base AS netatalk_build
 
@@ -36,8 +35,6 @@ RUN cd /usr/src/openslp/openslp && ./autogen.sh \
 RUN mkdir -p /usr/src/netatalk-code \
 && cd /usr/src/netatalk-code \
 && git clone --progress --depth 1 \
-#	https://github.com/Netatalk/Netatalk . -b branch-netatalk-2-2 \
-#	https://github.com/JensKSP/Netatalk . -b 2-2-build-fixes \#
 # https://github.com/rdmark/Netatalk-2.x.git . -b branch-netatalk-2-x \
 https://github.com/JensKSP/Netatalk.git . -b branch-netatalk-2-x-fixes
 

@@ -38,7 +38,7 @@
       },
 	  {
          "key" : "ATALKD_INTERFACE_eth1",
-         "value" : "eth1 -phase 2 -net 0-65534 -addr 65280.157"
+         "value" : "eth1 -phase 2 -net 50-1000 -addr 100.10 -zone \"bostonsp\""
       },
 	  {
          "key" : "AFPD_INSTANCE_default",
