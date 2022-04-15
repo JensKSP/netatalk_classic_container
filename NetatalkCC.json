@@ -17,6 +17,10 @@
          "value" : "Europe/Brussels"
       },
 	  {
+         "key" : "ATALKZONE",
+         "value" : "@bostonsp"
+      },
+	  {
          "key" : "ACCOUNT_bridge",
          "value" : "bridge"
       },
@@ -38,11 +42,11 @@
       },
 	  {
          "key" : "ATALKD_INTERFACE_eth1",
-         "value" : "eth1 -phase 2 -net 50-1000 -addr 100.10 -zone \"bostonsp\""
+         "value" : "eth1 -phase 2 -net 100-1000 -addr 100.128 -zone \"bostonsp\""
       },
 	  {
          "key" : "AFPD_INSTANCE_default",
-         "value" : "- -transall -setuplog \"default log_info\" -uamlist uams_clrtxt.so,uams_randnum.so,uams_pam.so,uams_dhx.so,uams_dhx2.so -maccodepage MAC_CENTRALEUROPE -nouservol -slp"
+         "value" : "- -transall -setuplog \"default log_info\" -uamlist uams_clrtxt.so,uams_dhx.so,uams_dhx2.so -maccodepage MAC_CENTRALEUROPE -nouservol -slp"
       },
 	  {
          "key" : "VOLUME_DEFAULT_OPTIONS",

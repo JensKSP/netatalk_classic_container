@@ -28,6 +28,15 @@ then
   fi
 	
   ##
+  # ATALK ZONE
+  ##
+  if [ -n "${ATALKZONE}" ];
+  then
+	  echo "Setting appletalk zone to ${ATALKZONE}"
+	  sed -i 's|#ATALK_ZONE=@zone|ATALK_ZONE='"${ATALKZONE}"'|g' "$CONFDIR/netatalk.conf"
+  fi
+
+  ##
   # GROUPS
   ##
   for I_CONF in $(env | grep '^GROUP_')
@@ -59,8 +68,8 @@ then
     then
       ACCOUNT_GID_PARAM="-G $ACCOUNT_PRIMARY_GROUP"
     fi
-    echo "eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/sh $ACCOUNT_NAME"
-    eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/sh "$ACCOUNT_NAME"
+    echo "eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /sbin/nologin $ACCOUNT_NAME"
+    eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /sbin/nologin "$ACCOUNT_NAME"
 	
 	echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | passwd "$ACCOUNT_NAME"
 	if [ -n "${ACCOUNT_AFPPASSWORD}" ];
