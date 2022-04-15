@@ -17,6 +17,15 @@ then
   PREFIX=/opt/netatalk
   ETCDIR=$PREFIX/etc
   CONFDIR=$ETCDIR/netatalk
+  
+  ##
+  # TIMEZONE
+  ##
+  if [ -n "${TIMEZONE}" ];
+  then
+	ln -sv "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime
+	echo "${TIMEZONE}" >  /etc/timezone
+  fi
 	
   ##
   # GROUPS
@@ -54,8 +63,11 @@ then
     eval adduser -D -H $ACCOUNT_UID_PARAM $ACCOUNT_GID_PARAM -s /bin/sh "$ACCOUNT_NAME"
 	
 	echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | passwd "$ACCOUNT_NAME"
-	#echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | afppasswd -a "$ACCOUNT_NAME"
-	echo "$ACCOUNT_AFPPASSWORD" >> "${CONFDIR}/afppasswd"
+	if [ -n "${ACCOUNT_AFPPASSWORD}" ];
+	then
+		echo "$ACCOUNT_AFPPASSWORD" >> "${CONFDIR}/afppasswd"
+		#echo -e "$ACCOUNT_PASSWORD\n$ACCOUNT_PASSWORD" | afppasswd -a "$ACCOUNT_NAME"
+	fi
 
     # add user to groups...
     ACCOUNT_GROUPS=$(env | grep '^GROUPS_'"$ACCOUNT_NAME" | sed 's/^[^=]*=//g')

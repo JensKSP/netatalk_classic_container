@@ -13,16 +13,16 @@
          "value" : "/container/scripts:/opt/netatalk/sbin:/opt/netatalk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       },	
 	  {
+         "key" : "TIMEZONE",
+         "value" : "Europe/Brussels"
+      },
+	  {
          "key" : "ACCOUNT_bridge",
          "value" : "bridge"
       },
 	  {
          "key" : "PASSWORD_bridge",
          "value" : "!wAlker1"
-      },
-	  {
-         "key" : "AFPPASSWD_bridge",
-         "value" : "bridge:2177416C6B657231:****************:********"
       },
 	  {
          "key" : "UID_bridge",

@@ -37,13 +37,13 @@ RUN mkdir -p /usr/src/netatalk-code \
 && cd /usr/src/netatalk-code \
 && git clone --progress --depth 1 \
 #	https://github.com/Netatalk/Netatalk . -b branch-netatalk-2-2 \
-	https://github.com/JensKSP/Netatalk . -b 2-2-build-fixes
+#	https://github.com/JensKSP/Netatalk . -b 2-2-build-fixes \#
+# https://github.com/rdmark/Netatalk-2.x.git . -b branch-netatalk-2-x \
+https://github.com/JensKSP/Netatalk.git . -b branch-netatalk-2-x-fixes
 
-RUN cd /usr/src/netatalk-code && ./bootstrap \
-	&& CPPFLAGS="$CPPFLAGS -DNEED_RQUOTA" \
-		LDFLAGS="$LDFLAGS -ltirpc" \
-	./configure --prefix=/opt/netatalk \
-		--disable-afs \
+RUN cd /usr/src/netatalk-code \
+	&& ./bootstrap \
+	&& ./configure --prefix=/opt/netatalk \
 		--enable-ddp \
 		--enable-srvloc \
 		--enable-a2boot \
@@ -58,7 +58,10 @@ RUN cd /usr/src/netatalk-code && ./bootstrap \
 		--enable-krbV-uam \
 		--with-acls \
 		--enable-force-uidgid \
-	&& make -j$(nproc) && make install
+		--enable-quota \
+		--disable-shell-check \
+	&& make -j$(nproc) \
+	&& make install && find /opt
 
 FROM netatalk_base AS netatalk
 COPY --from=netatalk_build /opt/netatalk /opt/netatalk
@@ -66,7 +69,7 @@ COPY --from=netatalk_build /opt/netatalk /opt/netatalk
 COPY ./etc/netatalk /opt/netatalk/etc/netatalk
 ENV PATH="/container/scripts:/opt/netatalk/sbin:/opt/netatalk/bin:${PATH}"
 
-RUN touch /var/log/messages \
+RUN find /opt && touch /var/log/messages \
 	&& afppasswd -c
 
 COPY ./scripts /container/scripts
