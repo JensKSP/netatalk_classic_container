@@ -42,7 +42,7 @@
       },
 	  {
          "key" : "ATALKD_INTERFACE_eth1",
-         "value" : "eth1 -phase 2 -net 100-1000 -addr 100.128 -zone \"bostonsp\""
+         "value" : "eth1 -router -phase 2 -net 100-1000 -addr 100.128 -zone \"bostonsp\""
       },
 	  {
          "key" : "AFPD_INSTANCE_default",
