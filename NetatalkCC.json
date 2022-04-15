@@ -42,7 +42,7 @@
       },
 	  {
          "key" : "AFPD_INSTANCE_default",
-         "value" : "- -transall -setuplog \"default log_maxdebug\" -uamlist uams_randnum.so,uams_dhx.so,uams_dhx2.so -maccodepage MAC_CENTRALEUROPE -nouservol -slp"
+         "value" : "- -transall -setuplog \"default log_info\" -uamlist uams_clrtxt.so,uams_randnum.so,uams_pam.so,uams_dhx.so,uams_dhx2.so -maccodepage MAC_CENTRALEUROPE -nouservol -slp"
       },
 	  {
          "key" : "VOLUME_DEFAULT_OPTIONS",

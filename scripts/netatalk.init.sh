@@ -27,7 +27,7 @@ AFPD_RUN=yes
 AFPD_MAX_CLIENTS=20
 AFPD_UAMLIST="-U uams_dhx.so,uams_dhx2.so"
 AFPD_GUEST=nobody
-CNID_CONFIG="-l log_debug"
+CNID_CONFIG="-l log_info"
 
 ATALKD_RUN=no
 PAPD_RUN=no

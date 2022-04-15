@@ -8,7 +8,7 @@ RUN apk add --no-cache db db-utils libgcrypt openssl zlib \
 FROM netatalk_base AS netatalk_build
 
 RUN apk add --no-cache make gcc git flex bison \
-	autoconf automake libtool patch pkgconfig \
+	autoconf automake libtool pkgconfig \
 	linux-headers gdb file \
 	libc-dev db-dev libgcrypt-dev openssl-dev \
 	zlib-dev avahi-dev linux-pam-dev \
@@ -33,13 +33,11 @@ RUN cd /usr/src/openslp/openslp && ./autogen.sh \
 		--enable-slpv2-security --prefix=/opt/netatalk \
 	&& make -j$(nproc) && make install
 
-COPY ./patches/netatalk.patch /usr/src/patches/netatalk.patch
-
 RUN mkdir -p /usr/src/netatalk-code \
 && cd /usr/src/netatalk-code \
 && git clone --progress --depth 1 \
-	https://github.com/Netatalk/Netatalk . -b branch-netatalk-2-2 \
-&& patch -Np1 < /usr/src/patches/netatalk.patch
+#	https://github.com/Netatalk/Netatalk . -b branch-netatalk-2-2 \
+	https://github.com/JensKSP/Netatalk . -b 2-2-build-fixes
 
 RUN cd /usr/src/netatalk-code && ./bootstrap \
 	&& CPPFLAGS="$CPPFLAGS -DNEED_RQUOTA" \
